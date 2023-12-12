@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taiwan map</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="https://unpkg.com/topojson@3.0.2/dist/topojson.js"></script>
+
+    <style>
+        body {
+            /* background: lightblue; */
+            margin: 0;
+            overflow: hidden;
+        }
+
+        svg {
+            width: 100vw;
+            height: 100vh;
+            display: block;
+        }
+
+        .town {
+            fill: #ebf0e4;
+            stroke: black;
+            stroke-width: 0.3px;
+        }
+
+        .town:hover {
+            fill: lightgray;
+        }
+
+        .country {
+            fill: #ebf0e4;
+            stroke: black;
+            stroke-width: 0.3px;
+        }
+
+        .country:hover {
+            fill: lightgray;
+        }
+    </style>
+</head>
+
+<body>
+    <svg id="Taiwanmap"></svg>
+
+
+</body>
+
+<script>
+    function renderTaiwan() {
+        // Set up the SVG dimensions 
+     
+        const width = 2000;
+        const height = 1200;
+        // Create an SVG element
+        const svg = d3.select("#Taiwanmap")
+            .attr("width", width)
+            .attr("height", height)
+            .style("cursor", "grab");//change the mouse to hand visualization
+
+
+        const g = svg.append("g");
+        // Define a projection for Taiwan
+
+        const zoom = d3.zoom()
+            .on("zoom", handleZoom)
+            .on("start", () => svg.style("cursor", "grabbing")) // Change cursor on drag start
+            .on("end", () => svg.style("cursor", "grab")); // Reset cursor on drag end
+        svg.call(zoom);
+
+
+        const initialScale = 9000;
+        const projectmethod = d3.geoMercator().center([120, 24.5]).scale(initialScale);
+        const pathGenerator = d3.geoPath().projection(projectmethod);
+        // Load GeoJSON data for Taiwan
+        let lowDetailData;
+        let highDetailData;
+
+        d3.json("https://raw.githubusercontent.com/Yang-Shun-Yu/Data-Visualization-Project/master/FinalProject/COUNTY_MOI_1090820.json")
+            .then(data => {
+
+                lowDetailData = topojson.feature(data, data.objects["COUNTY_MOI_1090820"]);
+                console.log(lowDetailData);
+                g.selectAll("path")
+                    .data(lowDetailData.features)
+                    .enter()
+                    .append("path")
+                    .attr("d", pathGenerator)
+                    .attr("class", "country")
+                    .append("title")
+                    .text(d => d.properties["COUNTYNAME"]);
+            });
+
+        d3.json("https://raw.githubusercontent.com/Yang-Shun-Yu/Data-Visualization-Project/master/FinalProject/T.json").then(function (data) {
+            // Draw the map
+
+            highDetailData = topojson.feature(data, data.objects["TOWN_MOI_1120825"]);
+            console.log(highDetailData);
+        });
+        function handleZoom(event) {
+            const currentScale = event.transform.k;
+            console.log(currentScale);
+
+            // Define a threshold to switch between low and high detail
+            const thresholdScale = 5;
+      
+
+            if (currentScale < thresholdScale) {
+                svg.selectAll("path").remove()
+                g.selectAll("path")
+                    .data(lowDetailData.features)
+                    .enter()
+                    .append("path")
+                    .attr("d", pathGenerator)
+                    .attr("class", "town")
+                    .append("title")
+                    .text(d => d.properties["COUNTYNAME"]);
+
+
+            } else {
+                svg.selectAll("path").remove()
+                g.selectAll("path")
+                    .data(highDetailData.features)
+                    .enter()
+                    .append("path")
+                    .attr("d", pathGenerator)
+                    .attr("class", "country")
+                    .append("title")
+                    .text(d => d.properties["TOWNNAME"]);
+
+            }
+
+            // Update the map transformation
+            g.attr("transform", event.transform);
+        }
+
+    }
+
+    renderTaiwan();
+</script>
