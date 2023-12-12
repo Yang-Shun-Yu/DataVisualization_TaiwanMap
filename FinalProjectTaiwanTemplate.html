@@ -50,16 +50,23 @@
 </body>
 
 <script>
-    function renderTaiwan() {
-        // Set up the SVG dimensions 
-     
-        const width = 2000;
-        const height = 1200;
-        // Create an SVG element
-        const svg = d3.select("#Taiwanmap")
-            .attr("width", width)
-            .attr("height", height)
-            .style("cursor", "grab");//change the mouse to hand visualization
+    let taiwanCenterX = 120;
+    let taiwanCenterY = 24.5;
+    let taiwanScale = 9000;
+    let flagLarge = false;
+    let flagSmall = false;
+    // Set up the SVG dimensions 
+
+    const width = 2000;
+    const height = 1200;
+    // Create an SVG element
+    const svg = d3.select("#Taiwanmap")
+        .attr("width", width)
+        .attr("height", height)
+        .style("cursor", "grab");//change the mouse to hand visualization
+
+    function renderTaiwan(svg) {
+
 
 
         const g = svg.append("g");
@@ -72,12 +79,13 @@
         svg.call(zoom);
 
 
-        const initialScale = 9000;
-        const projectmethod = d3.geoMercator().center([120, 24.5]).scale(initialScale);
+        const initialScale = taiwanScale;
+        const projectmethod = d3.geoMercator().center([taiwanCenterX, taiwanCenterY]).scale(initialScale);
         const pathGenerator = d3.geoPath().projection(projectmethod);
         // Load GeoJSON data for Taiwan
         let lowDetailData;
         let highDetailData;
+        let livingfunctionsData;
 
         d3.json("https://raw.githubusercontent.com/Yang-Shun-Yu/Data-Visualization-Project/master/FinalProject/COUNTY_MOI_1090820.json")
             .then(data => {
@@ -100,15 +108,21 @@
             highDetailData = topojson.feature(data, data.objects["TOWN_MOI_1120825"]);
             console.log(highDetailData);
         });
+        //renderlivingfunctions
+        var projection = d3.geoMercator().center([taiwanCenterX, taiwanCenterY]).scale(taiwanScale);
+
+
+
         function handleZoom(event) {
             const currentScale = event.transform.k;
-            console.log(currentScale);
+            // console.log(currentScale);
 
             // Define a threshold to switch between low and high detail
             const thresholdScale = 5;
-      
 
-            if (currentScale < thresholdScale) {
+
+
+            if (currentScale < thresholdScale && !flagSmall) {
                 svg.selectAll("path").remove()
                 g.selectAll("path")
                     .data(lowDetailData.features)
@@ -118,9 +132,9 @@
                     .attr("class", "town")
                     .append("title")
                     .text(d => d.properties["COUNTYNAME"]);
-
-
-            } else {
+                flagSmall = true;
+                flagLarge = false;
+            } else if (currentScale >= thresholdScale && !flagLarge) {
                 svg.selectAll("path").remove()
                 g.selectAll("path")
                     .data(highDetailData.features)
@@ -130,14 +144,23 @@
                     .attr("class", "country")
                     .append("title")
                     .text(d => d.properties["TOWNNAME"]);
+                flagLarge = true;
+                flagSmall = false;
 
             }
-
             // Update the map transformation
             g.attr("transform", event.transform);
         }
 
+
+
+
+
     }
 
-    renderTaiwan();
+
+
+
+    renderTaiwan(svg);
+
 </script>
