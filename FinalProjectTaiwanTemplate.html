@@ -10,16 +10,12 @@
 
     <style>
         body {
-            /* background: lightblue; */
             margin: 0;
             overflow: hidden;
         }
 
-        svg {
-            width: 100vw;
-            height: 100vh;
-            display: block;
-        }
+
+
 
         .town {
             fill: #ebf0e4;
@@ -40,120 +36,107 @@
         .country:hover {
             fill: lightgray;
         }
+
+  
+        #Taiwanmap {
+            background-color: rgb(230, 233, 233);
+        }
     </style>
 </head>
 
 <body>
-    <svg id="Taiwanmap"></svg>
-
-
+    <div id="graphsContainer">
+        <div id="Taiwanmap" style="display: inline-block;"></div>
+    </div>
 </body>
 
+
+
+
 <script>
-    let taiwanCenterX = 120;
-    let taiwanCenterY = 24.5;
-    let taiwanScale = 9000;
+    let taiwanCenterX = 121.5;
+    let taiwanCenterY = 23.5;
+    let taiwanScale = 6000;
+    const width = 800;
+    const height = 500;
+    let lowDetailData;
+    let highDetailData;
+    let livingfunctionsData;
     let flagLarge = false;
     let flagSmall = false;
-    // Set up the SVG dimensions 
 
-    const width = 2000;
-    const height = 1200;
-    // Create an SVG element
-    const svg = d3.select("#Taiwanmap")
+    const svgContainer = d3.select("#Taiwanmap")
+        .append("svg")
         .attr("width", width)
         .attr("height", height)
-        .style("cursor", "grab");//change the mouse to hand visualization
+        .style("cursor", "grab");
 
-    function renderTaiwan(svg) {
+    const svg = svgContainer.append("g");
+    const g = svg.append("g");
+    const zoom = d3.zoom()
+        .on("zoom", handleZoom)
+        .on("start", () => svg.style("cursor", "grabbing"))
+        .on("end", () => svg.style("cursor", "grab"));
+    svg.call(zoom);
+    const initialScale = taiwanScale;
+    const projectmethod = d3.geoMercator().center([taiwanCenterX, taiwanCenterY]).scale(initialScale);
+    const pathGenerator = d3.geoPath().projection(projectmethod);
 
-
-
-        const g = svg.append("g");
-        // Define a projection for Taiwan
-
-        const zoom = d3.zoom()
-            .on("zoom", handleZoom)
-            .on("start", () => svg.style("cursor", "grabbing")) // Change cursor on drag start
-            .on("end", () => svg.style("cursor", "grab")); // Reset cursor on drag end
-        svg.call(zoom);
-
-
-        const initialScale = taiwanScale;
-        const projectmethod = d3.geoMercator().center([taiwanCenterX, taiwanCenterY]).scale(initialScale);
-        const pathGenerator = d3.geoPath().projection(projectmethod);
-        // Load GeoJSON data for Taiwan
-        let lowDetailData;
-        let highDetailData;
-        let livingfunctionsData;
-
-        d3.json("https://raw.githubusercontent.com/Yang-Shun-Yu/Data-Visualization-Project/master/FinalProject/COUNTY_MOI_1090820.json")
-            .then(data => {
-
-                lowDetailData = topojson.feature(data, data.objects["COUNTY_MOI_1090820"]);
-                console.log(lowDetailData);
-                g.selectAll("path")
-                    .data(lowDetailData.features)
-                    .enter()
-                    .append("path")
-                    .attr("d", pathGenerator)
-                    .attr("class", "country")
-                    .append("title")
-                    .text(d => d.properties["COUNTYNAME"]);
-            });
-
-        d3.json("https://raw.githubusercontent.com/Yang-Shun-Yu/Data-Visualization-Project/master/FinalProject/T.json").then(function (data) {
-            // Draw the map
-
-            highDetailData = topojson.feature(data, data.objects["TOWN_MOI_1120825"]);
-            console.log(highDetailData);
+    d3.json("https://raw.githubusercontent.com/Yang-Shun-Yu/Data-Visualization-Project/master/FinalProject/COUNTY_MOI_1090820.json")
+        .then(jsonData => {
+            lowDetailData = topojson.feature(jsonData, jsonData.objects["COUNTY_MOI_1090820"]);
+            renderTaiwanlowDetail(g);
+            console.log(lowDetailData);
         });
-        //renderlivingfunctions
-        var projection = d3.geoMercator().center([taiwanCenterX, taiwanCenterY]).scale(taiwanScale);
+
+    d3.json("https://raw.githubusercontent.com/Yang-Shun-Yu/Data-Visualization-Project/master/FinalProject/T.json")
+        .then(jsonData => {
+            highDetailData = topojson.feature(jsonData, jsonData.objects["TOWN_MOI_1120825"]);
+        });
+
+    var projection = d3.geoMercator().center([taiwanCenterX, taiwanCenterY]).scale(taiwanScale);
+
+    function renderTaiwanlowDetail(g) {
+        // console.log(lowDetailData);
+        g.selectAll("path")
+            .data(lowDetailData.features)
+            .enter()
+            .append("path")
+            .attr("d", pathGenerator)
+            .attr("class", "town")
+            .append("title")
+            .text(d => d.properties["COUNTYNAME"]);
+    }
+
+    function renderTaiwanhighDetail(g) {
+        g.selectAll("path")
+            .data(highDetailData.features)
+            .enter()
+            .append("path")
+            .attr("d", pathGenerator)
+            .attr("class", "country")
+            .append("title")
+            .text(d => d.properties["TOWNNAME"]);
+    }
 
 
-
-        function handleZoom(event) {
-            const currentScale = event.transform.k;
-            // console.log(currentScale);
-
-            // Define a threshold to switch between low and high detail
-            const thresholdScale = 5;
-
-
-
-            if (currentScale < thresholdScale && !flagSmall) {
-                svg.selectAll("path").remove()
-                g.selectAll("path")
-                    .data(lowDetailData.features)
-                    .enter()
-                    .append("path")
-                    .attr("d", pathGenerator)
-                    .attr("class", "town")
-                    .append("title")
-                    .text(d => d.properties["COUNTYNAME"]);
-                flagSmall = true;
-                flagLarge = false;
-            } else if (currentScale >= thresholdScale && !flagLarge) {
-                svg.selectAll("path").remove()
-                g.selectAll("path")
-                    .data(highDetailData.features)
-                    .enter()
-                    .append("path")
-                    .attr("d", pathGenerator)
-                    .attr("class", "country")
-                    .append("title")
-                    .text(d => d.properties["TOWNNAME"]);
-                flagLarge = true;
-                flagSmall = false;
-
-            }
-            // Update the map transformation
-            g.attr("transform", event.transform);
+    function handleZoom(event) {
+        const currentScale = event.transform.k;
+        const thresholdScale = 5;
+        if (currentScale < thresholdScale && !flagSmall) {
+            svg.selectAll("path").remove();
+            svg.selectAll("circle").remove();
+            renderTaiwanlowDetail(g);
+            flagSmall = true;
+            flagLarge = false;
+        } else if (currentScale >= thresholdScale && !flagLarge) {
+            svg.selectAll("path").remove();
+            svg.selectAll("circle").remove();
+            renderTaiwanhighDetail(g);
+            flagLarge = true;
+            flagSmall = false;
         }
-
-
-
+        g.attr("transform", event.transform);
 
 
     }
@@ -161,6 +144,11 @@
 
 
 
-    renderTaiwan(svg);
+    
+
+
+    
 
 </script>
+
+</html>
