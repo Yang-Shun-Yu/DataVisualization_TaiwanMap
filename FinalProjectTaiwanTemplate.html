@@ -37,7 +37,7 @@
             fill: lightgray;
         }
 
-  
+
         #Taiwanmap {
             background-color: rgb(230, 233, 233);
         }
@@ -75,9 +75,9 @@
     const g = svg.append("g");
     const zoom = d3.zoom()
         .on("zoom", handleZoom)
-        .on("start", () => svg.style("cursor", "grabbing"))
-        .on("end", () => svg.style("cursor", "grab"));
-    svg.call(zoom);
+        .on("start", () => svgContainer.style("cursor", "grabbing"))
+        .on("end", () => svgContainer.style("cursor", "grab"));
+    svgContainer.call(zoom);
     const initialScale = taiwanScale;
     const projectmethod = d3.geoMercator().center([taiwanCenterX, taiwanCenterY]).scale(initialScale);
     const pathGenerator = d3.geoPath().projection(projectmethod);
@@ -144,10 +144,10 @@
 
 
 
-    
 
 
-    
+
+
 
 </script>
 
