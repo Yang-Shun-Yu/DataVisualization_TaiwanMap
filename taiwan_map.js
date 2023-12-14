@@ -1,9 +1,9 @@
 function renderTaiwanMap() {
-    let taiwanCenterX = 124;
+    let taiwanCenterX = 123.5;
     let taiwanCenterY = 23.5;
-    let taiwanScale = 4500;
-    const lowDetailDataUrl = "https://raw.githubusercontent.com/Yang-Shun-Yu/Data-Visualization-Project/master/FinalProject/COUNTY_MOI_1090820.json";
-    const highDetailDataUrl = "https://raw.githubusercontent.com/Yang-Shun-Yu/Data-Visualization-Project/master/FinalProject/T.json";
+    let taiwanScale = 6000;
+    const lowDetailDataUrl = "https://raw.githubusercontent.com/Yang-Shun-Yu/DataVisualization_TaiwanMap/main/dataset/taiwan_low_detail.json";
+    const highDetailDataUrl = "https://raw.githubusercontent.com/Yang-Shun-Yu/DataVisualization_TaiwanMap/main/dataset/taiwan_high_detail.json";
     let lowDetailData;
     let highDetailData;
     let flagLarge = false;
