@@ -2,8 +2,11 @@ function renderPopulation() {
     const populationUrl = "https://raw.githubusercontent.com/Yang-Shun-Yu/DataVisualization_TaiwanMap/main/dataset/population.json";
     d3.json(populationUrl)
         .then(function (jsonData) {
+            console.log(jsonData);
+            return;
             renderPopulationChart1(jsonData);
             renderPopulationChart2(jsonData, 2000);
+            renderPopulationChart4(jsonData, 2000);
         });
 }
 
@@ -190,5 +193,119 @@ function renderPopulationChart2(jsonData, year) {
             .attr("height", yScale2.bandwidth() - 2)
             .attr("transform", `translate(${width / 2 + offset}, ${heightMargin})`);
     }
+}
 
+function renderPopulationChart4(jsonData, year) {
+    const svgContainer = d3.select("#svg4");
+    const width = svgContainer.style("width").slice(0, -2);
+    const height = svgContainer.style("height").slice(0, -2);
+    const widthMargin = 40;
+    const heightMargin = 40;
+
+    // remove old svg
+    svgContainer.selectAll("svg")
+        .remove();
+
+    const svg = svgContainer.append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    // add text for selecting year
+    for (let i = 0; i < 20; i++) {
+        svg.append("text")
+            .attr("class", "population-svg4-year-text")
+            .attr("transform", `translate(${width / 20 * i}, ${heightMargin - 25}) rotate(0)`)
+            .text(`${2000 + i}`)
+            .on("mouseover", function (e, d) {
+                renderPopulationChart4(jsonData, 2000 + i);
+            });
+    }
+
+    let data = {};
+    let dataKeys = [];
+    for (let key in jsonData[year]) {
+        if (key.length > 3 || key == "臺灣省") {
+            continue;
+        }
+
+        let sum = 0;
+        for (let j = 0; j < jsonData[year][key]["total"].length; j++) {
+            sum += jsonData[year][key]["total"][j];
+        }
+        data[key] = sum;
+        dataKeys.push(key);
+    }
+
+    const radius = 80;
+    const color = d3.scaleOrdinal()
+        .domain(dataKeys)
+        .range(d3.schemeDark2);
+
+    const pie = d3.pie()
+        .sort(function (a, b) { return a[1] - b[1]; })
+        .value(function (d) { return d[1]; })
+    const pieData = pie(Object.entries(data));
+
+    // The arc generator
+    const arc = d3.arc()
+        .innerRadius(radius * 0.5)         // This is the size of the donut hole
+        .outerRadius(radius * 0.8)
+
+    // Another arc that won't be drawn. Just for labels positioning
+    const outerArc = d3.arc()
+        .innerRadius(radius * 1.2)
+        .outerRadius(radius * 1.2)
+
+    // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+    svg
+        .selectAll('allSlices')
+        .data(pieData)
+        .join('path')
+        .attr('d', arc)
+        .attr('fill', d => color(d.data[1]))
+        .attr("stroke", "white")
+        .style("stroke-width", "2px")
+        .style("opacity", 0.7)
+        .attr("transform", `translate(${width / 2},${height / 2})`);
+
+    // Add the polylines between chart and labels:
+    svg
+        .selectAll('allPolylines')
+        .data(pieData)
+        .join('polyline')
+        .attr("stroke", "black")
+        .style("fill", "none")
+        .attr("stroke-width", 1)
+        .attr('points', function (d) {
+            const posA = arc.centroid(d) // line insertion in the slice
+            const posB = outerArc.centroid(d) // line break: we use the other arc generator that has been built only for that
+            const posC = outerArc.centroid(d); // Label position = almost the same as posB
+            const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2 // we need the angle to see if the X position will be at the extreme right or extreme left
+            posC[0] = radius * 1.25 * (midangle < Math.PI ? 1 : -1); // multiply by 1 or -1 to put it on the right or on the left
+            console.log([posA, posB, posC]);
+            // posA[0] += 100;
+            return [posA, posB];
+        })
+        .attr("transform", `translate(${width / 2},${height / 2})`);
+
+    // Add the polylines between chart and labels:
+    svg
+        .selectAll('allLabels')
+        .data(pieData)
+        .join('text')
+        .text(d => d.data[0])
+        .attr('transform', function (d) {
+            const pos = outerArc.centroid(d);
+            const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
+            // pos[0] = radius * 1.25 * (midangle < Math.PI ? 1 : -1);
+            
+            pos[0] += width / 2;
+            pos[1] += height / 2;
+            return `translate(${pos})`;
+        })
+        .style('text-anchor', function (d) {
+            const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
+            return (midangle < Math.PI ? 'start' : 'end')
+        })
+        .style("font-size", "6px")
 }
