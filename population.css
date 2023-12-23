@@ -46,3 +46,13 @@
     text-anchor: middle;
     font-size: 12px;
 }
+
+.population-svg4-year {
+    stroke: none;
+    text-anchor: left;
+    font-size: 8px;
+}
+
+.population-svg4-year-highlight {
+    stroke: #AE8F00;
+}
