@@ -3,7 +3,6 @@ function renderPopulation() {
     d3.json(populationUrl)
         .then(function (jsonData) {
             console.log(jsonData);
-            return;
             renderPopulationChart1(jsonData);
             renderPopulationChart2(jsonData, 2000);
             renderPopulationChart4(jsonData, 2000);
@@ -53,18 +52,16 @@ function renderPopulationChart1(jsonData) {
 
     let line1 = [], line2 = [], line3 = [];
     for (let i = yearDomain[0]; i <= yearDomain[1]; i++) {
-        let sum1 = 0, sum2 = 0, sum3 = 0, total = 0;
+        let sum1 = 0, sum2 = 0, sum3 = 0;
+        let total = jsonData[i]["總計"]["grand-total"]["total"];
         for (let j = 0; j < 3; j++) {
-            sum1 += jsonData[i]["總計Total"]["total"][j];
-            total += jsonData[i]["總計Total"]["total"][j];
+            sum1 += jsonData[i]["總計"]["total"]["total"][j];
         }
         for (let j = 4; j < 13; j++) {
-            sum2 += jsonData[i]["總計Total"]["total"][j];
-            total += jsonData[i]["總計Total"]["total"][j];
+            sum2 += jsonData[i]["總計"]["total"]["total"][j];
         }
-        for (let j = 13; j < jsonData[i]["總計Total"]["total"].length; j++) {
-            sum3 += jsonData[i]["總計Total"]["total"][j];
-            total += jsonData[i]["總計Total"]["total"][j];
+        for (let j = 13; j < jsonData[i]["總計"]["total"]["total"].length; j++) {
+            sum3 += jsonData[i]["總計"]["total"]["total"][j];
         }
         line1.push([i, sum1 / total * 100]);
         line2.push([i, sum2 / total * 100]);
@@ -168,20 +165,17 @@ function renderPopulationChart2(jsonData, year) {
         .attr("transform", `translate(${width / 2}, ${heightMargin - 10}) rotate(0)`)
         .text("age");
 
-    // calculate total population
-    let maleTotal = 0, femaleTotal = 0;
-    for (let i = 0; i < 17; i++) {
-        maleTotal += jsonData[year]["總計Total"]["male"][i];
-        femaleTotal += jsonData[year]["總計Total"]["female"][i];
-    }
-
     // add bars
+    const maleTotal = jsonData[year]["總計"]["grand-total"]["male"];
+    const femaleTotal = jsonData[year]["總計"]["grand-total"]["female"];
     for (let i = 0; i < 17; i++) {
+        const male = jsonData[year]["總計"]["total"]["male"][i];
+        const female = jsonData[year]["總計"]["total"]["female"][i];
         svg.append("rect")
             .attr("class", "rect svg2-male")
-            .attr("x", width / 2 - offset - (xScale1(0) - xScale1(jsonData[year]["總計Total"]["male"][i] / maleTotal * 100)))
+            .attr("x", width / 2 - offset - (xScale1(0) - xScale1(male / maleTotal * 100)))
             .attr("y", yScale1(ageDomain1[i]))
-            .attr("width", xScale1(0) - xScale1(jsonData[year]["總計Total"]["male"][i] / maleTotal * 100))
+            .attr("width", xScale1(0) - xScale1(male / maleTotal * 100))
             .attr("height", yScale1.bandwidth() - 2)
             .attr("transform", `translate(${0}, ${heightMargin})`);
 
@@ -189,7 +183,7 @@ function renderPopulationChart2(jsonData, year) {
             .attr("class", "rect svg2-female")
             .attr("x", xScale2(0))
             .attr("y", yScale2(ageDomain2[i]))
-            .attr("width", xScale2(jsonData[year]["總計Total"]["female"][i] / femaleTotal * 100) - xScale2(0))
+            .attr("width", xScale2(female / femaleTotal * 100) - xScale2(0))
             .attr("height", yScale2.bandwidth() - 2)
             .attr("transform", `translate(${width / 2 + offset}, ${heightMargin})`);
     }
@@ -213,7 +207,7 @@ function renderPopulationChart4(jsonData, year) {
     // add text for selecting year
     for (let i = 0; i < 20; i++) {
         svg.append("text")
-            .attr("class", "population-svg4-year-text")
+            .attr("class", function () { return (year == 2000 + i) ? "population-svg4-year population-svg4-year-highlight" : "population-svg4-year"; })
             .attr("transform", `translate(${width / 20 * i}, ${heightMargin - 25}) rotate(0)`)
             .text(`${2000 + i}`)
             .on("mouseover", function (e, d) {
@@ -224,20 +218,15 @@ function renderPopulationChart4(jsonData, year) {
     let data = {};
     let dataKeys = [];
     for (let key in jsonData[year]) {
-        if (key.length > 3 || key == "臺灣省") {
+        if (key == "總計") {
             continue;
         }
-
-        let sum = 0;
-        for (let j = 0; j < jsonData[year][key]["total"].length; j++) {
-            sum += jsonData[year][key]["total"][j];
-        }
-        data[key] = sum;
+        data[key] = jsonData[year][key]["grand-total"]["total"];
         dataKeys.push(key);
     }
 
     const radius = 80;
-    const color = d3.scaleOrdinal()
+    const colors = d3.scaleOrdinal()
         .domain(dataKeys)
         .range(d3.schemeDark2);
 
@@ -246,59 +235,34 @@ function renderPopulationChart4(jsonData, year) {
         .value(function (d) { return d[1]; })
     const pieData = pie(Object.entries(data));
 
-    // The arc generator
     const arc = d3.arc()
-        .innerRadius(radius * 0.5)         // This is the size of the donut hole
+        .innerRadius(radius * 0.5)
         .outerRadius(radius * 0.8)
-
-    // Another arc that won't be drawn. Just for labels positioning
-    const outerArc = d3.arc()
+    const labelArc = d3.arc()
         .innerRadius(radius * 1.2)
         .outerRadius(radius * 1.2)
 
-    // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
-    svg
-        .selectAll('allSlices')
+    svg.selectAll("arc")
         .data(pieData)
-        .join('path')
-        .attr('d', arc)
-        .attr('fill', d => color(d.data[1]))
-        .attr("stroke", "white")
-        .style("stroke-width", "2px")
-        .style("opacity", 0.7)
+        .join("path")
+        .attr("d", arc)
+        .attr("fill", function (d) { return colors(d.data[1]); })
+        .attr("class", "population-svg4-arc")
+        .attr("transform", `translate(${width / 2}, ${height / 2})`);
+
+    svg.selectAll("line")
+        .data(pieData)
+        .join("polyline")
+        .attr("class", "population-svg4-line")
+        .attr("points", function (d) { return [arc.centroid(d), labelArc.centroid(d)]; })
         .attr("transform", `translate(${width / 2},${height / 2})`);
 
-    // Add the polylines between chart and labels:
-    svg
-        .selectAll('allPolylines')
+    svg.selectAll("label")
         .data(pieData)
-        .join('polyline')
-        .attr("stroke", "black")
-        .style("fill", "none")
-        .attr("stroke-width", 1)
-        .attr('points', function (d) {
-            const posA = arc.centroid(d) // line insertion in the slice
-            const posB = outerArc.centroid(d) // line break: we use the other arc generator that has been built only for that
-            const posC = outerArc.centroid(d); // Label position = almost the same as posB
-            const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2 // we need the angle to see if the X position will be at the extreme right or extreme left
-            posC[0] = radius * 1.25 * (midangle < Math.PI ? 1 : -1); // multiply by 1 or -1 to put it on the right or on the left
-            console.log([posA, posB, posC]);
-            // posA[0] += 100;
-            return [posA, posB];
-        })
-        .attr("transform", `translate(${width / 2},${height / 2})`);
-
-    // Add the polylines between chart and labels:
-    svg
-        .selectAll('allLabels')
-        .data(pieData)
-        .join('text')
-        .text(d => d.data[0])
+        .join("text")
+        .attr("class", "population-svg4-label")
         .attr('transform', function (d) {
-            const pos = outerArc.centroid(d);
-            const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
-            // pos[0] = radius * 1.25 * (midangle < Math.PI ? 1 : -1);
-            
+            let pos = labelArc.centroid(d);
             pos[0] += width / 2;
             pos[1] += height / 2;
             return `translate(${pos})`;
@@ -307,5 +271,5 @@ function renderPopulationChart4(jsonData, year) {
             const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
             return (midangle < Math.PI ? 'start' : 'end')
         })
-        .style("font-size", "6px")
+        .text(function (d) { return d.data[0]; });
 }
