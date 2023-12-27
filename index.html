@@ -15,9 +15,9 @@
         <h1>Taiwan Interactive Map</h1>
     </header>
     <nav>
-        <div class="nav-item">Housing Prices</div>
-        <div class="nav-item">Population</div>
-        <div class="nav-item">Living Facilities</div>
+        <div class="nav-item" onclick="renderTaiwanMap(function () {} )">Housing Prices</div>
+        <div class="nav-item" onclick="renderTaiwanMap(function(){}); renderPopulation();">Population</div>
+        <div class="nav-item" onclick="renderTaiwanMap(renderLivingFacilitiesMapData); renderLivingFacilities();">Living Facilities</div>
     </nav>
     <section>
         <div class="cards">
@@ -37,10 +37,8 @@
     <script src="https://unpkg.com/topojson@3.0.2/dist/topojson.js"></script>
     <script src="./taiwan_map.js"></script>
     <script src="./population.js"></script>
-    <script>
-        renderTaiwanMap();
-        renderPopulation();
-    </script>
+    <script src="./living_facilities.js"></script>
+    <script src="./index.js"></script>
 </body>
 
 </html>

@@ -6,14 +6,14 @@ body {
 
 header {
     background-color: #333333;
-    color: #ffffff;
+    color: #FFFFFF;
     padding: 2px;
     font-size: 14px;
     text-align: center;
 }
 
 nav {
-    background-color: #f4f4f4;
+    background-color: #F4F4F4;
     padding: 10px;
     display: flex;
     text-align: center;
@@ -26,11 +26,16 @@ section {
 
 .nav-item {
     width: 33%;
-    color: #ffffff;
+    color: #FFFFFF;
     margin-right: 10px;
     padding: 2px;
     background-color: #333333;
     border-radius: 10px;
+}
+
+.nav-item:hover {
+    background-color: #AE8F00;
+    font-weight: bold;
 }
 
 .cards {
@@ -46,7 +51,7 @@ section {
 .svg {
     width: 96%;
     margin: 2%;
-    border: 2px solid #dddddd;
+    border: 2px solid #DDDDDD;
     border-radius: 5px;
     display: block;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);

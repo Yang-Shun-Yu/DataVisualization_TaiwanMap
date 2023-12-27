@@ -1,4 +1,4 @@
-function renderTaiwanMap() {
+function renderTaiwanMap(renderData) {
     let taiwanCenterX = 123.5;
     let taiwanCenterY = 23.5;
     let taiwanScale = 6000;
@@ -12,6 +12,10 @@ function renderTaiwanMap() {
     const svgContainer = d3.select("#svg3")
         .style("background-color", "#003D79")
         .style("cursor", "grab");
+
+    // remove old svg
+    svgContainer.selectAll("g")
+        .remove();
 
     const svg = svgContainer.append("g");
     const g = svg.append("g");
@@ -39,6 +43,8 @@ function renderTaiwanMap() {
         .then(function (jsonData) {
             highDetailData = topojson.feature(jsonData, jsonData.objects["TOWN_MOI_1120825"]);
         });
+
+    renderData(g, projectMethod);
 
     function renderTaiwanLowDetail(g) {
         g.selectAll("path")
@@ -79,5 +85,6 @@ function renderTaiwanMap() {
             flagSmall = false;
         }
         g.attr("transform", event.transform);
+        renderData(g, projectMethod);
     }
 }

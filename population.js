@@ -2,7 +2,6 @@ function renderPopulation() {
     const populationUrl = "https://raw.githubusercontent.com/Yang-Shun-Yu/DataVisualization_TaiwanMap/main/dataset/population.json";
     d3.json(populationUrl)
         .then(function (jsonData) {
-            console.log(jsonData);
             renderPopulationChart1(jsonData);
             renderPopulationChart2(jsonData, 2000);
             renderPopulationChart4(jsonData, 2000);
@@ -15,6 +14,10 @@ function renderPopulationChart1(jsonData) {
     const height = svgContainer.style("height").slice(0, -2);
     const widthMargin = 40;
     const heightMargin = 40;
+
+    // remove old svg
+    svgContainer.selectAll("svg")
+        .remove();
 
     const svg = svgContainer.append("svg")
         .attr("width", width)
@@ -272,4 +275,8 @@ function renderPopulationChart4(jsonData, year) {
             return (midangle < Math.PI ? 'start' : 'end')
         })
         .text(function (d) { return d.data[0]; });
+}
+
+function renderPopulationMapData() {
+    console.log("aaaaa");
 }
