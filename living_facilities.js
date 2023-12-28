@@ -20,6 +20,7 @@ function renderLivingFacilities() {
     d3.csv(url)
         .then(function (csvData) {
             renderLivingFacilitiesChart1(csvData);
+            renderLivingFacilitiesChart2(csvData);
         });
 }
 
@@ -34,7 +35,8 @@ function renderLivingFacilitiesChart1(csvData) {
     svgContainer.selectAll("div")
         .remove();
     const tooltip = svgContainer.append("div")
-        .attr("class", "living-facilities-svg1-tooltip");
+        .attr("id", "living-facilities-svg1-tooltip")
+        .attr("class", "living-facilities-tooltip");
 
     svgContainer.selectAll("svg")
         .remove();
@@ -68,11 +70,13 @@ function renderLivingFacilitiesChart1(csvData) {
 
     const plotData = totalObjectsData
         .filter(function (d) { return d !== undefined; })
-        .map(function (d) { return {
-            city: d.city,
-            year: +d.year,
-            totalObjects: d.totalObjects
-        }});
+        .map(function (d) {
+            return {
+                city: d.city,
+                year: +d.year,
+                totalObjects: d.totalObjects
+            }
+        });
 
     const xScale = d3.scaleLinear()
         .domain(d3.extent(plotData, function (d) { return d.year; }))
@@ -141,7 +145,7 @@ function renderLivingFacilitiesChart1(csvData) {
             d3.select(this)
                 .transition()
                 .attr("r", 8);
-            d3.select(".living-facilities-svg1-tooltip")
+            d3.select("#living-facilities-svg1-tooltip")
                 .html(`city: ${d.city}<br>year: ${d.year}<br>number: ${d.totalObjects}`)
                 .style("left", `${event.layerX + 10}px`)
                 .style("top", `${event.layerY + 10}px`)
@@ -158,9 +162,151 @@ function renderLivingFacilitiesChart1(csvData) {
                 .transition()
                 .duration(200)
                 .attr("r", 4);
-            d3.select(".living-facilities-svg1-tooltip")
+            d3.select("#living-facilities-svg1-tooltip")
                 .style("opacity", 0);
 
         }
     });
+}
+
+function renderLivingFacilitiesChart2(csvData) {
+    const svgContainer = d3.select("#svg2");
+    const width = svgContainer.style("width").slice(0, -2);
+    const height = svgContainer.style("height").slice(0, -2);
+    const widthMargin = 40;
+    const heightMargin = 40;
+
+    svgContainer.selectAll("div")
+        .remove();
+    const tooltip = svgContainer.append("div")
+        .attr("id", "living-facilities-svg2-tooltip")
+        .attr("class", "living-facilities-tooltip");
+
+    svgContainer.selectAll("svg")
+        .remove();
+    const svg = svgContainer.append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    const groupedData = csvData.reduce(function (acc, current) {
+        const city = current.縣市;
+        const year = current.場館啟用年;
+        if (!acc[city]) {
+            acc[city] = {};
+        }
+        if (!acc[city][year]) {
+            acc[city][year] = [];
+        }
+        acc[city][year].push(current);
+        return acc;
+    }, {});
+
+    const totalObjectsData = Object.keys(groupedData).map(function (city) {
+        let sum = 0;
+        let i = 0;
+        let n = Object.keys(groupedData[city]).length
+        return Object.keys(groupedData[city]).map(function (year) {
+            sum += groupedData[city][year].length;
+            const totalObjects = sum;
+            i++;
+            if (i == n) {
+                return { city, year, totalObjects };
+            }
+        }).filter(Boolean);
+    }).flat();
+
+    const transformedData = {};
+    const domainCity = [];
+    totalObjectsData.forEach(function (item) {
+        transformedData[item.city] = item.totalObjects;
+        domainCity.push(item.city);
+    });
+
+    const radius = 100;
+
+    // Create dummy data
+    const data = transformedData;
+    // Convert data object to an array of objects
+    const dataArray = Object.entries(data);
+
+    // Sort the data array based on values in descending order
+    dataArray.sort(function (a, b) { return b[1] - a[1]; });
+    console.log(dataArray);
+
+    // set the color scale
+    const customColors = [
+        "#FF5733", "#3498DB", "#2ECC71", "#F39C12", "#8E44AD", "#E74C3C", "#16A085",
+        "#D35400", "#1ABC9C", "#F1C40F", "#34495E", "#FFC300", "#3498DB", "#27AE60",
+        "#E74C3C", "#9B59B6", "#E67E22", "#2980B9", "#2C3E50", "#F39C12", "#7F8C8D",
+        "#1ABC9C", "#FF5733", "#D35400", "#27AE60", "#3498DB", "#E74C3C", "#9B59B6",
+        "#E67E22", "#2980B9", "#2C3E50", "#F39C12", "#3498DB", "#9B59B6", "#E67E22",
+        "#2980B9", "#2C3E50"
+    ];
+
+    let cityColorMap = {};
+    dataArray.forEach(function (d, index) {
+        cityColorMap[d[0]] = customColors[index];
+    });
+
+    const pie = d3.pie()
+        .sort(null)
+        .value(d => d[1])
+    const data_ready = pie(dataArray)
+
+    const arc = d3.arc()
+        .innerRadius(radius * 0.5)
+        .outerRadius(radius * 0.8)
+    const outerArc = d3.arc()
+        .innerRadius(radius * 0.9)
+        .outerRadius(radius * 0.9)
+
+    svg.selectAll('allSlices')
+        .data(data_ready)
+        .join('path')
+        .attr('d', arc)
+        .attr("transform", `translate(${width / 2}, ${height / 2}) rotate(0)`)
+        .attr("fill", d => d3.color(cityColorMap[d.data[0]]))
+        .attr("stroke", "white")
+        .style("stroke-width", "2px")
+        .style("opacity", 0.7)
+        .on("mouseover", handleMouseOver)
+        .on("mouseout", handleMouseOut);
+
+    function handleMouseOver(event, d) {
+        d3.select("#living-facilities-svg2-tooltip")
+            .html(` ${d.data[0]} ${d.data[1]}`)
+            .style("left", `${event.layerX + 10}px`)
+            .style("top", `${event.layerY + 10}px`)
+            .style("position", "absolute")
+            .style("padding", "5px")
+            .style("font-size", "10px")
+            .style("background-color", "#D0D0D0")
+            .style("border-radius", "10px")
+            .style("opacity", 1);
+
+        d3.select(this)
+            .transition()
+            .duration(200)
+            .attr("d", d3.arc()
+                .innerRadius(radius * 0.5)
+                .outerRadius(radius * 0.9));
+
+        d3.select(this)
+            .attr("fill", d => d3.color(cityColorMap[d.data[0]]).darker(2));
+    }
+
+    function handleMouseOut(event, d) {
+        d3.select("#living-facilities-svg2-tooltip")
+            .style("opacity", 0);
+        d3.select(this)
+            .transition()
+            .duration(200)
+            .attr("d", arc);
+
+        // d3.select(this)
+        //     .attr("fill", "#FFCC02");
+
+        d3.select(this)
+            .attr("fill", d => d3.color(cityColorMap[d.data[0]]));
+    }
 }
