@@ -1,1 +1,2 @@
-renderTaiwanMap(function(){});
+// renderTaiwanMap(function(){});
+TaiwanMap.render(function () { });

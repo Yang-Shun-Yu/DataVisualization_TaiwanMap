@@ -146,7 +146,7 @@ function renderLivingFacilitiesChart1(csvData) {
                 .transition()
                 .attr("r", 8);
             d3.select("#living-facilities-svg1-tooltip")
-                .html(`city: ${d.city}<br>year: ${d.year}<br>number: ${d.totalObjects}`)
+                .html(`city: ${d.city}, year: ${d.year}, number: ${d.totalObjects}`)
                 .style("left", `${event.layerX + 10}px`)
                 .style("top", `${event.layerY + 10}px`)
                 .style("position", "absolute")
@@ -223,17 +223,12 @@ function renderLivingFacilitiesChart2(csvData) {
     });
 
     const radius = 100;
-
-    // Create dummy data
     const data = transformedData;
-    // Convert data object to an array of objects
     const dataArray = Object.entries(data);
 
-    // Sort the data array based on values in descending order
     dataArray.sort(function (a, b) { return b[1] - a[1]; });
     console.log(dataArray);
 
-    // set the color scale
     const customColors = [
         "#FF5733", "#3498DB", "#2ECC71", "#F39C12", "#8E44AD", "#E74C3C", "#16A085",
         "#D35400", "#1ABC9C", "#F1C40F", "#34495E", "#FFC300", "#3498DB", "#27AE60",
@@ -257,7 +252,7 @@ function renderLivingFacilitiesChart2(csvData) {
         .innerRadius(radius * 0.5)
         .outerRadius(radius * 0.8)
     const outerArc = d3.arc()
-        .innerRadius(radius * 0.9)
+        .innerRadius(radius * 0.5)
         .outerRadius(radius * 0.9)
 
     svg.selectAll('allSlices')
@@ -287,9 +282,7 @@ function renderLivingFacilitiesChart2(csvData) {
         d3.select(this)
             .transition()
             .duration(200)
-            .attr("d", d3.arc()
-                .innerRadius(radius * 0.5)
-                .outerRadius(radius * 0.9));
+            .attr("d", outerArc);
 
         d3.select(this)
             .attr("fill", d => d3.color(cityColorMap[d.data[0]]).darker(2));

@@ -15,8 +15,8 @@
         <h1>Taiwan Interactive Map</h1>
     </header>
     <nav>
-        <div class="nav-item" onclick="renderTaiwanMap(function () {} )">Housing Prices</div>
-        <div class="nav-item" onclick="renderTaiwanMap(function(){}); renderPopulation();">Population</div>
+        <div class="nav-item" onclick="renderTaiwanMap(function(){})">Housing Prices</div>
+        <div class="nav-item" onclick="TaiwanMap.render(Population.renderMapData); Population.render();">Population</div>
         <div class="nav-item" onclick="renderTaiwanMap(renderLivingFacilitiesMapData); renderLivingFacilities();">Living Facilities</div>
     </nav>
     <section>

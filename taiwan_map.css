@@ -1,19 +1,12 @@
-.town {
+.taiwan-map-town,
+.taiwan-map-county {
     fill: #01814A;
-    stroke: black;
+    stroke: #000000;
     stroke-width: 0.3px;
 }
 
-.town:hover {
-    fill: lightgray;
-}
-
-.country {
-    fill: #01814A;
-    stroke: black;
-    stroke-width: 0.3px;
-}
-
-.country:hover {
-    fill: lightgray;
+.taiwan-map-town:hover,
+.taiwan-map-county:hover {
+    fill: #D0D0D0;
+    stroke-width: 1.5;
 }
