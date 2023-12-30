@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="./index.css">
     <link rel="stylesheet" href="./taiwan_map.css">
     <link rel="stylesheet" href="./population.css">
+    <link rel="stylesheet" href="./functionality.css">
+
+    
     <title>Taiwan Interactive Map</title>
 </head>
 
@@ -17,7 +20,7 @@
     <nav>
         <div class="nav-item" onclick="renderTaiwanMap(function () {} )">Housing Prices</div>
         <div class="nav-item" onclick="renderTaiwanMap(function(){}); renderPopulation();">Population</div>
-        <div class="nav-item" onclick="renderTaiwanMap(renderLivingFacilitiesMapData); renderLivingFacilities();">Living Facilities</div>
+        <div class="nav-item" onclick="renderTaiwanMap(renderLivingFacilitiesMapData,renderLivingFacilitiesMapDataDraggableSlider); renderLivingFacilities();renderfunctionality();renderLivingFacilitiesDonutChart(draggableSliderValue);">Living Facilities</div>
     </nav>
     <section>
         <div class="cards">
@@ -33,12 +36,15 @@
                 <div id="svg5" class="svg small-svg"></div>
             </div>
     </section>
+
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="https://unpkg.com/topojson@3.0.2/dist/topojson.js"></script>
     <script src="./taiwan_map.js"></script>
     <script src="./population.js"></script>
     <script src="./living_facilities.js"></script>
     <script src="./index.js"></script>
+    <script src="./functionality.js"></script>
+
 </body>
 
 </html>

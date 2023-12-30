@@ -17,3 +17,9 @@
 .country:hover {
     fill: lightgray;
 }
+
+.selected-county {
+    fill: lightgray; /* Set the fill color for the selected county */
+    stroke: red; /* Set the stroke color for the selected county */
+    stroke-width: 1; /* Set the stroke width for the selected county */
+}

@@ -1,0 +1,61 @@
+/* Style for the main select element */
+select {
+    padding: 10px;
+    font-size: 12px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    outline: none;
+    background-color: #f8f8f8;
+    color: #333;
+    width: 200px; /* Adjust the width as needed */
+    margin-right: 30px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+/* Style for the option elements within the select */
+option {
+    background-color: #fff;
+    color: #333;
+    padding: 10px;
+}
+
+/* Style for the selected option */
+option:checked {
+    background-color: #007bff;
+    color: #fff;
+}
+
+/* Style for the dropdown arrow */
+select::-ms-expand {
+    display: none;
+}
+
+select::after {
+    content: "\25BC"; /* Unicode character for down arrow */
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    color: #555;
+}
+
+/* Hover effect for options */
+option:hover {
+    background-color: #e0e0e0;
+}
+
+.text-above-selection {
+    text-align: center;
+    line-height: 1.5; 
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    
+    /* text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); */
+}
+
+.slider {
+    cursor: pointer;
+    user-select: none;
+}

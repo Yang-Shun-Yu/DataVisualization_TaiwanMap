@@ -1,4 +1,7 @@
-function renderTaiwanMap(renderData) {
+var draggableSliderG;
+var draggableSliderProjectMethod;
+let taiwan_map_svg;
+function renderTaiwanMap(renderData,renderDataDraggableSlider) {
     let taiwanCenterX = 123.5;
     let taiwanCenterY = 23.5;
     let taiwanScale = 6000;
@@ -9,9 +12,12 @@ function renderTaiwanMap(renderData) {
     let flagLarge = false;
     let flagSmall = false;
 
+    
     const svgContainer = d3.select("#svg3")
         .style("background-color", "#003D79")
         .style("cursor", "grab");
+
+    taiwan_map_svg = svgContainer;
 
     // remove old svg
     svgContainer.selectAll("g")
@@ -44,6 +50,8 @@ function renderTaiwanMap(renderData) {
             highDetailData = topojson.feature(jsonData, jsonData.objects["TOWN_MOI_1120825"]);
         });
 
+    draggableSliderG = g;
+    draggableSliderProjectMethod = projectMethod;
     renderData(g, projectMethod);
 
     function renderTaiwanLowDetail(g) {
@@ -85,6 +93,7 @@ function renderTaiwanMap(renderData) {
             flagSmall = false;
         }
         g.attr("transform", event.transform);
-        renderData(g, projectMethod);
+        renderDataDraggableSlider(draggableSliderG,draggableSliderProjectMethod,draggableSliderCSV,draggableSliderValue);
+        
     }
 }
