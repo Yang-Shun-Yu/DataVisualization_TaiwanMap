@@ -1,6 +1,6 @@
 .taiwan-map-town,
 .taiwan-map-county {
-    fill: #01814A;
+    /* fill: #01814A; */
     stroke: #000000;
     stroke-width: 0.3px;
 }

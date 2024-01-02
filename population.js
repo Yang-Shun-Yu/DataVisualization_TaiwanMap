@@ -1,7 +1,74 @@
 let Population = {
     url: "https://raw.githubusercontent.com/Yang-Shun-Yu/DataVisualization_TaiwanMap/main/dataset/population.json",
     renderMapData: function () {
-        console.log("aaaaaaaaaaa");
+        let year = 2020;
+        let temp = {
+            "臺北市": 271.79,
+            "嘉義市": 60.02,
+            "新竹市": 104.15,
+            "基隆市": 132.75,
+            "新北市": 2052.56,
+            "桃園市": 1220.95,
+            "臺中市": 2214.89,
+            "彰化縣": 1074.39,
+            "金門縣": 151.65,
+            "高雄市": 2951.85,
+            "澎湖縣": 126.86,
+            "臺南市": 2191.65,
+            "雲林縣": 1290.83,
+            "連江縣": 28.80,
+            "新竹縣": 1427.53,
+            "苗栗縣": 1820.31,
+            "屏東縣": 2775.60,
+            "嘉義縣": 1903.63,
+            "宜蘭縣": 2143.62,
+            "南投縣": 4106.43,
+            "花蓮縣": 4628.57,
+            "臺東縣": 3515.25
+        };
+        let temp2 = [100, 200, 500, 1000, 2000, 5000, 8000, 10000];
+        let colors = [
+            "#FF8040",
+            "#FF5809",
+            "#F75000",
+            "#D94600",
+            "#BB3D00",
+            "#A23400",
+            "#842B00",
+            "#642100"
+        ];
+        d3.json(Population.url)
+            .then(function (jsonData) {
+                let year = 2020;
+                for (let i = 0; i < TaiwanMap.data.low.features.length; i++) {
+                    
+                    const countyName = TaiwanMap.data.low.features[i].properties["COUNTYNAME"];
+                    const population = jsonData[year][countyName]["grand-total"]["total"];
+                    const area = temp[countyName];
+                    const density = population / area;
+                    console.log(countyName, population / area);
+                    
+                    for (let j = 0; j < temp2.length; j++) {
+                        if (density < temp2[j]) {
+                            TaiwanMap.g.select(`#${countyName}`)
+                                .attr("fill", colors[j]);
+                            break;
+                        }
+                    }
+                    
+                }
+            });
+
+
+        // for (let i = yearDomain[0]; i < yearDomain[1]; i++) {
+
+
+        //     lines[0].data.push({ year: i, title: "0~14 years old", value: sums[0] / total * 100 });
+        //     lines[1].data.push({ year: i, title: "15~64 years old", value: sums[1] / total * 100 });
+        //     lines[2].data.push({ year: i, title: "64~ years old", value: sums[2] / total * 100 });
+        //     lines[3].data.push({ year: i, title: "dependency ratio", value:  });
+        // }
+
     },
     render: function () {
         d3.json(Population.url)

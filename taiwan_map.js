@@ -66,9 +66,12 @@ let TaiwanMap = {
             .enter()
             .append("path")
             .attr("d", TaiwanMap.pathGenerator)
+            .attr("id", function (d) { return d.properties["COUNTYNAME"]; })
             .attr("class", "taiwan-map-county")
+            .attr("fill", "#01814A")
             .append("title")
             .text(function (d) { return d.properties["COUNTYNAME"]; });
+        console.log(TaiwanMap.data.low.features);
     },
     renderHighDetail: function () {
         TaiwanMap.g.selectAll("path")
@@ -76,9 +79,11 @@ let TaiwanMap = {
             .enter()
             .append("path")
             .attr("d", TaiwanMap.pathGenerator)
+            .attr("id", function (d) { return d.properties["TOWNNAME"]; })
             .attr("class", "taiwan-map-town")
             .append("title")
             .text(function (d) { return d.properties["TOWNNAME"]; });
+        console.log(TaiwanMap.data.high.features);
     },
     handleZoom: function (event) {
         TaiwanMap.scale.now = event.transform.k;
