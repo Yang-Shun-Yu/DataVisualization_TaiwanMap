@@ -3,8 +3,8 @@ var filename
 //data相關
 var rowData, year, rankedYear
 // 畫布相關
-var maxRows = 12;  // 最多可顯示12個rows
-var divContainer = document.getElementById('svg2');
+var maxRows = 25;  // 最多可顯示12個rows
+var divContainer = document.getElementById('svg1');
 const chartHeight = divContainer.offsetHeight-40;
 const chartWidth =divContainer.offsetWidth;
 const chartMargin = {top: 30, right: 90, bottom: 0, left: 5};
@@ -16,7 +16,7 @@ var playButton; // 播放按鈕
 // 預處理
 var rank = 0;
 function housingAnimate(){
-filename = 'dataset/3years_median_house_price.json';
+filename = 'https://raw.githubusercontent.com/Yang-Shun-Yu/DataVisualization_TaiwanMap/main/dataset/3years_median_house_price.json';
 if(urlParams.get("filename")){
   filename = urlParams.get("filename");
 }
@@ -29,7 +29,7 @@ d3.json(filename).then(function(d) {
   // 用全域變數紀錄資料
   rowData = d;
   // 建立畫布
-  chartSvg = d3.select('#svg2')
+  chartSvg = d3.select('#svg1')
     .append('svg')
       .attr('width', chartWidth)
       .attr('height', chartHeight)
@@ -303,7 +303,6 @@ function throwCity(type, city='新竹市', color='#C11432'){
 ////// 資料處理 //////
 // 資料預處理
 function preProcess(city='新竹市') {
-  console.log(rowData)
   var years = Object.keys(rowData);
   var ret = [];
   var lastValue = {};
@@ -339,12 +338,14 @@ function preProcess(city='新竹市') {
 var renderData = []; // 存要看的city data
 var interval = null;  // 設置一個變數來跑動畫
 function change() {
-  var svg5 = document.getElementById('svg5');
-  svg5.innerHTML = `  
-  <div class="playpause">
+  var svg5 = document.getElementById('svg4');
+  svg5.innerHTML += `  
+  <div class="playpause" style="height:0.01">
   <input type="checkbox" value="None" id="playpause" name="check" />
   <label for="playpause" tabindex=1></label>
   </div>`;
+
+
   
   // 播放按鈕
   var checkBox = document.getElementById('playpause');

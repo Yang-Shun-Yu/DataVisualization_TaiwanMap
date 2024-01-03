@@ -1,6 +1,12 @@
 var urlParams, filename, globalData, margin, x, y, xaxis, cityColor, country, countrydata, minHousePrice, maxHousePrice, svg,
-    vm, tagname, points, tooltip, focus, timeScales, lastAxisNum
+    vm, tagname, points, tooltip, focus, timeScales, lastAxisNum, NFlag, MFlag, SFlag, EFlag, OFlag, TFlag;
 function housingInit(){
+NFlag = false;
+MFlag = false;
+SFlag = false;
+EFlag = false;
+OFlag = false;
+TFlag = false;
 
 var divs = document.querySelectorAll('.svg.small-svg');
 divs.forEach(function(div) {
@@ -8,7 +14,7 @@ divs.forEach(function(div) {
 });
 
 urlParams = new URLSearchParams(window.location.search);
-filename = 'dataset/0years_median_house_price.json';
+filename = 'https://raw.githubusercontent.com/Yang-Shun-Yu/DataVisualization_TaiwanMap/main/dataset/0years_median_house_price.json';
 globalData = null;
 
 if(urlParams.get("filename")){
@@ -60,7 +66,7 @@ for (i = 0; i < xaxis.length; i++) {
   countrydata.push(i);
 }
 
-svg = d3.select("#svg1").append("svg").attr("class", "line-chart")
+svg = d3.select("#svg5").append("svg").attr("class", "line-chart")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
@@ -271,7 +277,7 @@ d3.json(filename).then(function(data) {
   document.body.appendChild(newDiv);
 
   var svg4 = document.getElementById('svg4');
-  svg4.innerHTML=
+  svg4.innerHTML+=
   `<button onclick="buttonOnClick('total')">全台</button>
   <button onclick="buttonOnClick('N')">北部</button>
   <button onclick="buttonOnClick('M')">中部</button>
@@ -427,23 +433,61 @@ function onlyUnique(value, index, self) {
   return self.indexOf(value) === index;
 }
 function buttonOnClick(position, clickedCity){
+  console.log(position, clickedCity);
       for(var i=0;i<country.length;i++){
         var tmp = country[i];
         throwCity('update', tmp, cityColor[tmp]);
       }
       if(position == 'N'){
-        country = country.concat(Object.keys(cityColor).slice(0, 7));
+        if(NFlag == false){
+          country = country.concat(Object.keys(cityColor).slice(0, 7));
+        }
+        else{
+          country = country.filter(function(value, index, arr){ return value < 7; });
+        }
+        NFlag = !NFlag;
+        
       }else if(position == 'M'){
-        country = country.concat(Object.keys(cityColor).slice(7, 12));
+        if(MFlag == false){
+          country = country.concat(Object.keys(cityColor).slice(7, 12));
+        }
+        else{
+          country = country.filter(function(value, index, arr){ return value < 12 && value >= 7; });
+        }
+        MFlag = !MFlag;
       }else if(position == 'S'){
-        country = country.concat(Object.keys(cityColor).slice(12, 17));
+        if(SFlag == false){
+          country = country.concat(Object.keys(cityColor).slice(12, 17));
+        }
+        else{
+          country = country.filter(function(value, index, arr){ return value < 17 && value >= 12; });
+        }
+        SFlag = !SFlag;
       }else if(position == 'E'){
-        country = country.concat(Object.keys(cityColor).slice(17, 19));
+        if(EFlag == false){
+          country = country.concat(Object.keys(cityColor).slice(17, 19));
+        }
+        else{
+          country = country.filter(function(value, index, arr){ return value < 19 && value >= 17; });
+        }
+        EFlag = !EFlag;
       }else if(position == 'O'){
-        country = country.concat(Object.keys(cityColor).slice(19, 21));
+        if(OFlag == false){
+          country = country.concat(Object.keys(cityColor).slice(19, 21));
+        }
+        else{
+          country = country.filter(function(value, index, arr){ return value < 21 && value >= 19; });
+        }
+        OFlag = !OFlag;
       }
       else if(position == 'total'){
-        country = Object.keys(cityColor);
+        if(TFlag == false){
+          country = Object.keys(cityColor);
+        }
+        else{
+          country = [];
+        }
+        TFlag = !TFlag;
       }
       if (clickedCity != undefined && position == 'NA'){
         if(country.includes(clickedCity)){
