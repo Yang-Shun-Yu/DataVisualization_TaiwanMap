@@ -58,21 +58,21 @@ hr {
     margin-top: 20px;
 }
 
-/* text {
-    font-size: 16px;
+.housingText {
+    font-size: 50px;
     font-family: Open Sans, sans-serif;
-} */
+}
 
-    text.label {
+.housingTextLabel {
         font-weight: 600;
         
     }
 
-    text.valueLabel {
+    .housingTextValueLabel {
         font-weight: 300;
     }
 
-    text.yearText {
+    .housingTextYearText {
         font-size: 64px;
         font-weight: 700;
         opacity: 0.25;
