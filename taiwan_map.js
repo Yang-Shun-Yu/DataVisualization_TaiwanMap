@@ -60,7 +60,9 @@ function renderTaiwanMap(renderData,renderDataDraggableSlider) {
             .enter()
             .append("path")
             .attr("d", pathGenerator)
+            .attr("id", function (d) { return d.properties['COUNTYNAME']; })
             .attr("class", "town")
+            .attr("fill", "#01814A")
             .on("click", function (event,d){buttonOnClick(position = "NA",clickedCity = d.properties['COUNTYNAME'])})
             .append("title")
             .text(function (d) { return d.properties["COUNTYNAME"]; });
