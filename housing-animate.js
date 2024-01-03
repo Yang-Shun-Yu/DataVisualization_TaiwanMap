@@ -82,11 +82,11 @@ d3.json(filename).then(function(d) {
     .attr('height', chartY.bandwidth())
     .style('fill', d => d.color);
   // 畫區域名字
-  chartSvg.selectAll('text.label')
+  chartSvg.selectAll('text.Label')
     .data(rankedYear, d => d.name)
     .enter()
     .append('text')
-    .attr('class', 'label')
+    .attr('class', 'housingTextLabel')
     .attr('x', d => chartX(d.value) - 15)
     .attr('y', d => chartY(d.rank) + chartY.bandwidth() / 2 + 5)
     .style('text-anchor', 'end')
@@ -97,7 +97,7 @@ d3.json(filename).then(function(d) {
     .data(rankedYear, d => d.name)
     .enter()
     .append('text')
-    .attr('class', 'valueLabel')
+    .attr('class', 'housingTextValueLabel')
     .attr('x', d => chartX(d.value) + 15)
     .attr('y', d => chartY(d.rank) + chartY.bandwidth() / 2 + 5)
     .text(d => d3.format(',.0f')(d.value));
@@ -112,7 +112,7 @@ d3.json(filename).then(function(d) {
   };
   // 畫右下角的年
   yearText = chartSvg.append('text')
-    .attr('class', 'yearText')
+    .attr('class', 'housingTextYearText')
     .attr('x', chartWidth-5)
     .attr('y', chartHeight - 25)
     .style('text-anchor', 'end')
@@ -185,13 +185,13 @@ function update(type='update') {
     .remove();
   
   // 更新區域文字
-  var labels = chartSvg.selectAll('.label')
+  var labels = chartSvg.selectAll('.housingTextLabel')
       .data(rankedYear, d => d.name);
   
   labels
     .enter()
     .append('text')
-    .attr('class', 'label')
+    .attr('class', 'housingTextLabel')
     .attr('x', d => chartX(d.value) - 15)
     .attr('y', d => chartY(maxRows) + chartY.bandwidth() / 2 + 5)
     .style('text-anchor', 'end')
@@ -216,13 +216,13 @@ function update(type='update') {
       .remove();
   
   // 更新價格文字
-  var valueLabels = chartSvg.selectAll('.valueLabel')
+  var valueLabels = chartSvg.selectAll('.housingTextValueLabel')
   	.data(rankedYear, d => d.name);
   
   valueLabels
     .enter()
     .append('text')
-    .attr('class', 'valueLabel')
+    .attr('class', 'housingTextValueLabel')
     .attr('x', d => chartX(d.value) + 15)
     .attr('y', d => chartY(maxRows) + chartY.bandwidth() / 2 + 5)
     .text(d => d3.format(',.0f')(d.value))

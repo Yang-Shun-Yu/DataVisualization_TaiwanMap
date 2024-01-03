@@ -264,17 +264,20 @@ d3.json(filename).then(function(data) {
         }
     }
   }
-    // Create a new div element
-  var newDiv = document.createElement("div");
+// Get the SVG container element
+var svgContainer = document.getElementById('svg3');
 
-  // Set its id attribute
-  newDiv.setAttribute("id", "tooltip");
+// Create a new <div> element
+var newDiv = document.createElement("div");
 
-  // Set its style attribute
-  newDiv.setAttribute("style", "position:absolute;background-color:lightgray;padding:5px;left:200px");
+// Set its id attribute
+newDiv.setAttribute("id", "tooltip");
 
-  // Append the new div to the body (or any other parent element)
-  document.body.appendChild(newDiv);
+// Set its style attribute
+newDiv.setAttribute("style", "position:absolute;background-color:lightgray;padding:5px;left:200px");
+
+// Append the new div to the SVG container
+svgContainer.appendChild(newDiv);
 
   var svg4 = document.getElementById('svg4');
   svg4.innerHTML+=
