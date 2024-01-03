@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="./taiwan_map.css">
     <link rel="stylesheet" href="./population.css">
     <link rel="stylesheet" href="./functionality.css">
+    <link rel="stylesheet" href="./housing.css">
 
     
     <title>Taiwan Interactive Map</title>
@@ -18,7 +19,7 @@
         <h1>Taiwan Interactive Map</h1>
     </header>
     <nav>
-        <div class="nav-item" onclick="renderTaiwanMap(function () {} )">Housing Prices</div>
+        <div class="nav-item" onclick="renderTaiwanMap(function () {}); housingInit()">Housing Prices</div>
         <div class="nav-item" onclick="renderTaiwanMap(function(){}); renderPopulation();">Population</div>
         <div class="nav-item" onclick="renderTaiwanMap(renderLivingFacilitiesMapData,renderLivingFacilitiesMapDataDraggableSlider); renderLivingFacilities();renderfunctionality();renderLivingFacilitiesDonutChart(draggableSliderValue);">Living Facilities</div>
     </nav>
@@ -42,6 +43,10 @@
     <script src="./taiwan_map.js"></script>
     <script src="./population.js"></script>
     <script src="./living_facilities.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src='./housing.js'></script>
+    <script src='./housing-animate.js'></script>
     <script src="./index.js"></script>
     <script src="./functionality.js"></script>
 
