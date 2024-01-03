@@ -184,6 +184,13 @@ let Population = {
             .attr("transform", `translate(${widthMargin}, ${heightMargin})`)
             .call(d3.axisLeft(yScale));
 
+        const yScale2 = d3.scaleLinear()
+            .domain([0, 10])
+            .range([height - heightMargin * 2, 0]);
+        svg.append("g")
+            .attr("transform", `translate(${width - widthMargin}, ${heightMargin})`)
+            .call(d3.axisRight(yScale2));
+
         svg.append("text")
             .attr("text-anchor", "middle")
             .attr("font-size", "12px")
@@ -193,14 +200,45 @@ let Population = {
         svg.append("text")
             .attr("text-anchor", "middle")
             .attr("font-size", "12px")
-            .attr("transform", `translate(15, ${height / 2}) rotate(270)`)
+            .attr("transform", `translate(${15}, ${height / 2}) rotate(270)`)
             .text("population(%) / dependency ratio(%)");
-        
+
         svg.append("text")
             .attr("text-anchor", "middle")
-            .attr("font-size", "16px")
+            .attr("font-size", "12px")
+            .attr("transform", `translate(${width - 15}, ${height / 2}) rotate(270)`)
+            .text("population density(1000person/km2)");
+
+        svg.append("text")
+            .attr("text-anchor", "middle")
+            .attr("font-size", "14px")
             .attr("transform", `translate(${width / 2}, ${heightMargin - 10}) rotate(0)`)
             .text("Population / Dependency Ratio");
+
+        let temp = {
+            "臺北市": 271.79,
+            "嘉義市": 60.02,
+            "新竹市": 104.15,
+            "基隆市": 132.75,
+            "新北市": 2052.56,
+            "桃園市": 1220.95,
+            "臺中市": 2214.89,
+            "彰化縣": 1074.39,
+            "金門縣": 151.65,
+            "高雄市": 2951.85,
+            "澎湖縣": 126.86,
+            "臺南市": 2191.65,
+            "雲林縣": 1290.83,
+            "連江縣": 28.80,
+            "新竹縣": 1427.53,
+            "苗栗縣": 1820.31,
+            "屏東縣": 2775.60,
+            "嘉義縣": 1903.63,
+            "宜蘭縣": 2143.62,
+            "南投縣": 4106.43,
+            "花蓮縣": 4628.57,
+            "臺東縣": 3515.25
+        };
 
         let lines = [
             {
@@ -222,6 +260,11 @@ let Population = {
                 title: "dependency ratio",
                 data: [],
                 color: "#CE0000"
+            },
+            {
+                title: "population density",
+                data: [],
+                color: "#AE00AE"
             }
         ];
 
@@ -242,6 +285,7 @@ let Population = {
             lines[1].data.push({ year: i, title: "15~64 years old", value: sums[1] / total * 100 });
             lines[2].data.push({ year: i, title: "64~ years old", value: sums[2] / total * 100 });
             lines[3].data.push({ year: i, title: "dependency ratio", value: (sums[0] + sums[2]) / sums[1] * 100 });
+            lines[4].data.push({ year: i, title: "population density", value: total / temp[county] / 1000 });
         }
 
         for (let i = 0; i < lines.length; i++) {
@@ -249,7 +293,7 @@ let Population = {
                 .datum(lines[i].data)
                 .attr("d", d3.line()
                     .x(function (d) { return xScale(d.year) + widthMargin; })
-                    .y(function (d) { return yScale(d.value) + heightMargin; })
+                    .y(function (d) { return ((i < 4) ? yScale(d.value) : yScale2(d.value)) + heightMargin; })
                 )
                 .attr("fill", "none")
                 .attr("stroke", lines[i].color)
@@ -265,7 +309,7 @@ let Population = {
                 .data(lines[i].data)
                 .join("circle")
                 .attr("cx", function (d) { return xScale(d.year) + widthMargin; })
-                .attr("cy", function (d) { return yScale(d.value) + heightMargin; })
+                .attr("cy", function (d) { return ((i < 4) ? yScale(d.value) : yScale2(d.value)) + heightMargin; })
                 .attr("r", 4.0)
                 .attr("fill", lines[i].color)
                 .attr("opacity", 0.0)
@@ -275,7 +319,7 @@ let Population = {
                         .duration(500)
                         .attr("r", 8.0);
                     tooltip
-                        .html(`year: ${d.year}, title: ${d.title}, value: ${Math.round(d.value * 100) / 100}%`)
+                        .html(`year: ${d.year}, title: ${d.title}, value: ${Math.round(d.value * 100) / 100}${(i < 4) ? "(%)" : "(1000 person/km2)"}`)
                         .style("left", `${event.layerX + 10}px`)
                         .style("top", `${event.layerY + 10}px`)
                         .style("position", "absolute")
