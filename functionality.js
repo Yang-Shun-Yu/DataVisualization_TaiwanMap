@@ -9,10 +9,12 @@ let selectedCountyPath;
 let draggableSliderValue = 112;
 let selectedCountyDraggable = 'defaultCounty';
 function renderfunctionality() {
-    const svgContainer = d3.select("#svg5");
+    const svgContainer = d3.select("#svg4");
     svgContainer.selectAll("div")
         .remove();
     svgContainer.selectAll("svg")
+        .remove();
+    svgContainer.selectAll("button")
         .remove();
 
     // Select and remove the textSelection
@@ -63,7 +65,7 @@ function renderfunctionality() {
                 .attr("class", "text-above-selection")
                 .attr("text-anchor", "middle")
 
-                .text("Select a County and Town");
+                .text("選取縣市 鄉鎮市區");
 
 
             // Create two <select> elements and append them to the body
@@ -98,13 +100,13 @@ function renderfunctionality() {
 
             // Function to update the options of the second <select> based on the selected COUNTYNAME
             function updateTownOptions() {
-                
-             
+
+
 
                 const selectedCounty = countySelect.property("value");
                 selectedCountyDraggable = selectedCounty;
                 // Remove the previously selected county path class
-                
+
                 //highlight the selected country
                 if (selectedCountyPath) {
                     selectedCountyPath.classed("selected-county", false);
@@ -126,7 +128,7 @@ function renderfunctionality() {
                     const selectedCountyData = highDetailData.features.find(entry => entry.properties.COUNTYNAME === selectedCounty);
                     renderLivingFacilitiesCity(selectedCounty);
 
-                    renderLivingFacilitiesDonutChartCity(selectedCounty,draggableSliderValue);
+                    renderLivingFacilitiesDonutChartCity(selectedCounty, draggableSliderValue);
                     // Highlight the selected county area
                     selectedCountyPath = taiwan_map_svg.selectAll("path")
                         .filter(d => d.properties.COUNTYNAME === selectedCounty)
@@ -157,7 +159,7 @@ function renderfunctionality() {
                 .attr("class", "text-above-selection")
                 .attr("text-anchor", "middle")
 
-                .text("Draggable Slider");
+                .text("時間軸");
 
 
 
@@ -215,19 +217,19 @@ function renderfunctionality() {
                     .attr("dominant-baseline", "middle")
                     .attr("fill", "black")
                     .attr("transform", `translate(0, ${dragableheight / 3})`)
-                    .text(currentValue);
+                    .text(`${currentValue} 年`);
                 // You can also perform any other actions based on the new value here
                 // console.log("Current Value: " + currentValue);
-                
-                if(selectedCountyDraggable=='defaultCounty'){
-                    renderLivingFacilitiesDonutChartDraggableSlider(currentValue);
-                }else{
-                    renderLivingFacilitiesDonutChartCity(selectedCountyDraggable,draggableSliderValue);
-                }
-              
-                
 
-                renderLivingFacilitiesMapDataDraggableSlider(draggableSliderG,draggableSliderProjectMethod,draggableSliderCSV,currentValue);
+                if (selectedCountyDraggable == 'defaultCounty') {
+                    renderLivingFacilitiesDonutChartDraggableSlider(currentValue);
+                } else {
+                    renderLivingFacilitiesDonutChartCity(selectedCountyDraggable, draggableSliderValue);
+                }
+
+
+
+                renderLivingFacilitiesMapDataDraggableSlider(draggableSliderG, draggableSliderProjectMethod, draggableSliderCSV, currentValue);
             }
 
             // Function to calculate the handle position based on the current value

@@ -74,13 +74,13 @@ function renderLivingFacilitiesDonutChart(inputyear) {
     d3.csv(url)
         .then(function (csvData) {
             donutCSV = csvData;
-            renderDonutChart(csvData,inputyear);
+            renderDonutChart(csvData, inputyear);
         });
 }
 
-function renderLivingFacilitiesDonutChartCity(inputcity,inputyear) {
+function renderLivingFacilitiesDonutChartCity(inputcity, inputyear) {
 
-    renderDonutChartCity(donutCSV, inputcity,inputyear);
+    renderDonutChartCity(donutCSV, inputcity, inputyear);
 
 }
 
@@ -594,9 +594,9 @@ function renderLivingFacilitiesChart1CityTown(csvData, inputcity, inputtown) {
     });
 }
 
-function renderDonutChart(csvData,inputyear) {
+function renderDonutChart(csvData, inputyear) {
 
-    const svgContainer = d3.select("#svg2");
+    const svgContainer = d3.select("#svg5");
     const width = svgContainer.style("width").slice(0, -2);
     const height = svgContainer.style("height").slice(0, -2);
     const widthMarginLeft = 290;
@@ -609,14 +609,28 @@ function renderDonutChart(csvData,inputyear) {
     svgContainer.selectAll("svg")
         .remove();
 
+    svgContainer.selectAll("text")
+        .remove();
+    // Add a title to the graph
+    svgContainer.append("text")
+        .attr("class", "graph-title")
+        .attr("x", width / 2)
+        .attr("y", 20) // Adjust the y-coordinate to position the title
+        // .attr("text-anchor", "middle")
+        .style("font-size", "24px")
+        .style("font-weight", "bold")
+        .text(`臺灣縣市  民國 : ${inputyear}年`)
+    // .attr("transform", `translate(${width / 2},0)`);
     const svg = svgContainer.append("svg")
         .attr("width", width)
         .attr("height", height)
         .append("g")
         .attr("transform", `translate(${width / 2},${height / 2})`);
 
+
+
     const tooltip = svgContainer.append("div")
-        .attr("class", "living-facilities-svg2-tooltip");
+        .attr("class", "living-facilities-svg5-tooltip");
     // Step 1: Group data by "縣市" and "場館啟用年"
     const groupedData = csvData.reduce((acc, current) => {
         const city = current.縣市;
@@ -745,7 +759,7 @@ function renderDonutChart(csvData,inputyear) {
     function handleMouseOver(event, d) {
 
         // Display the value on hover
-        d3.select(".living-facilities-svg2-tooltip")
+        d3.select(".living-facilities-svg5-tooltip")
             .html(` ${d.data[0]} ${d.data[1]}`)
 
             .style("left", `${event.layerX + 10}px`)
@@ -771,7 +785,7 @@ function renderDonutChart(csvData,inputyear) {
 
     function handleMouseOut(event, d) {
         // Remove the value on mouseout
-        d3.select(".living-facilities-svg2-tooltip").style("opacity", 0);
+        d3.select(".living-facilities-svg5-tooltip").style("opacity", 0);
         // tooltip.transition().duration(500).style("opacity", 0);
         // Remove highlight from the pie slice
         d3.select(this)
@@ -786,9 +800,9 @@ function renderDonutChart(csvData,inputyear) {
 }
 
 
-function renderDonutChartCity(csvData, inputcity,inputyear) {
+function renderDonutChartCity(csvData, inputcity, inputyear) {
 
-    const svgContainer = d3.select("#svg2");
+    const svgContainer = d3.select("#svg5");
     const width = svgContainer.style("width").slice(0, -2);
     const height = svgContainer.style("height").slice(0, -2);
     const widthMarginLeft = 290;
@@ -801,6 +815,17 @@ function renderDonutChartCity(csvData, inputcity,inputyear) {
     svgContainer.selectAll("svg")
         .remove();
 
+    svgContainer.selectAll("text")
+        .remove();
+    // Add a title to the graph
+    svgContainer.append("text")
+        .attr("class", "graph-title")
+        .attr("x", width / 2)
+        .attr("y", 20) // Adjust the y-coordinate to position the title
+        // .attr("text-anchor", "middle")
+        .style("font-size", "24px")
+        .style("font-weight", "bold")
+        .text(`縣市 : ${inputcity}  民國 : ${inputyear}年`)
     const svg = svgContainer.append("svg")
         .attr("width", width)
         .attr("height", height)
@@ -808,7 +833,7 @@ function renderDonutChartCity(csvData, inputcity,inputyear) {
         .attr("transform", `translate(${width / 2},${height / 2})`);
 
     const tooltip = svgContainer.append("div")
-        .attr("class", "living-facilities-svg2-tooltip");
+        .attr("class", "living-facilities-svg5-tooltip");
     // Step 1: Group data by "縣市" and "場館啟用年"
     const groupedData = csvData.reduce((acc, current) => {
         const city = current.縣市;
@@ -842,7 +867,7 @@ function renderDonutChartCity(csvData, inputcity,inputyear) {
 
         return Object.keys(groupedData[town]).map(year => {
 
-            if (+year <= inputyear) {  
+            if (+year <= inputyear) {
                 sum += groupedData[town][year].length;
                 // console.log(sum);
 
@@ -932,7 +957,7 @@ function renderDonutChartCity(csvData, inputcity,inputyear) {
     function handleMouseOver(event, d) {
 
         // Display the value on hover
-        d3.select(".living-facilities-svg2-tooltip")
+        d3.select(".living-facilities-svg5-tooltip")
             .html(` ${d.data[0]} ${d.data[1]}`)
 
             .style("left", `${event.layerX + 10}px`)
@@ -958,7 +983,7 @@ function renderDonutChartCity(csvData, inputcity,inputyear) {
 
     function handleMouseOut(event, d) {
         // Remove the value on mouseout
-        d3.select(".living-facilities-svg2-tooltip").style("opacity", 0);
+        d3.select(".living-facilities-svg5-tooltip").style("opacity", 0);
         // tooltip.transition().duration(500).style("opacity", 0);
         // Remove highlight from the pie slice
         d3.select(this)
@@ -974,7 +999,7 @@ function renderDonutChartCity(csvData, inputcity,inputyear) {
 
 function renderDonutChartDraggableSlider(csvData, inputyear) {
 
-    const svgContainer = d3.select("#svg2");
+    const svgContainer = d3.select("#svg5");
     const width = svgContainer.style("width").slice(0, -2);
     const height = svgContainer.style("height").slice(0, -2);
     const widthMarginLeft = 290;
@@ -987,6 +1012,18 @@ function renderDonutChartDraggableSlider(csvData, inputyear) {
     svgContainer.selectAll("svg")
         .remove();
 
+    svgContainer.selectAll("text")
+        .remove();
+    // Add a title to the graph
+    svgContainer.append("text")
+        .attr("class", "graph-title")
+        .attr("x", width / 2)
+        .attr("y", 20) // Adjust the y-coordinate to position the title
+        // .attr("text-anchor", "middle")
+        .style("font-size", "24px")
+        .style("font-weight", "bold")
+        .text(`臺灣縣市  民國 : ${inputyear}年`)
+
     const svg = svgContainer.append("svg")
         .attr("width", width)
         .attr("height", height)
@@ -994,7 +1031,7 @@ function renderDonutChartDraggableSlider(csvData, inputyear) {
         .attr("transform", `translate(${width / 2},${height / 2})`);
 
     const tooltip = svgContainer.append("div")
-        .attr("class", "living-facilities-svg2-tooltip");
+        .attr("class", "living-facilities-svg5-tooltip");
     // Step 1: Group data by "縣市" and "場館啟用年"
     const groupedData = csvData.reduce((acc, current) => {
         const city = current.縣市;
@@ -1123,7 +1160,7 @@ function renderDonutChartDraggableSlider(csvData, inputyear) {
     function handleMouseOver(event, d) {
 
         // Display the value on hover
-        d3.select(".living-facilities-svg2-tooltip")
+        d3.select(".living-facilities-svg5-tooltip")
             .html(` ${d.data[0]} ${d.data[1]}`)
 
             .style("left", `${event.layerX + 10}px`)
@@ -1149,7 +1186,7 @@ function renderDonutChartDraggableSlider(csvData, inputyear) {
 
     function handleMouseOut(event, d) {
         // Remove the value on mouseout
-        d3.select(".living-facilities-svg2-tooltip").style("opacity", 0);
+        d3.select(".living-facilities-svg5-tooltip").style("opacity", 0);
         // tooltip.transition().duration(500).style("opacity", 0);
         // Remove highlight from the pie slice
         d3.select(this)
