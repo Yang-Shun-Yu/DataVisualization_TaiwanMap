@@ -14,6 +14,8 @@ function renderfunctionality() {
         .remove();
     svgContainer.selectAll("svg")
         .remove();
+    svgContainer.selectAll("text")
+        .remove()
     svgContainer.selectAll("button")
         .remove();
 

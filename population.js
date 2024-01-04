@@ -89,6 +89,13 @@ let Population = {
             .remove();
         svgContainer.selectAll("button")
             .remove();
+        svgContainer
+            .selectAll("text")
+            .remove();
+        svgContainer
+            .selectAll("select")
+            .remove();
+
         const textSelection = d3.select("#svg4")
             .append("div")
             .append("text")
@@ -167,7 +174,7 @@ let Population = {
             .attr("width", width)
             .attr("height", height);
 
-        const yearDomain = [2000, 2020];
+        const yearDomain = [2001, 2020];
         const percentageDomain = [0, 80];
 
         const xScale = d3.scaleLinear()
