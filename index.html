@@ -22,6 +22,8 @@
         <div class="nav-item" onclick="renderTaiwanMap(function () {}); housingInit()">Housing Prices</div>
         <div class="nav-item" onclick="renderTaiwanMap(Population.renderMapData, function(){}); Population.render();">Population</div>
         <div class="nav-item" onclick="renderTaiwanMap(renderLivingFacilitiesMapData,renderLivingFacilitiesMapDataDraggableSlider); renderLivingFacilities();renderfunctionality();renderLivingFacilitiesDonutChart(draggableSliderValue);">Living Facilities</div>
+        <div class="nav-item" onclick="renderTaiwanMap(function () {}); renderCorrelationMatrix(); renderSelection(); renderScatterPlots();">Integration</div>
+    
     </nav>
     <section>
         <div class="cards">
@@ -48,6 +50,7 @@
     <script src='./housing-animate.js'></script>
     <script src="./index.js"></script>
     <script src="./functionality.js"></script>
+    <script src="./integration.js"></script>
 
 </body>
 

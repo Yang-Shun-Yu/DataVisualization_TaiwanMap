@@ -363,6 +363,8 @@ let Population = {
 
         svgContainer.selectAll("rect")
             .remove();
+        svgContainer.selectAll("text")
+            .remove();
         const tooltip = svgContainer.append("div")
             .style("opacity", 0.0)
             .style("left", "0px")
