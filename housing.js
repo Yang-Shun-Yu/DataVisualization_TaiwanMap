@@ -1,4 +1,5 @@
-var urlParams, filename, globalData, margin, x, y, xaxis, cityColor, country, countrydata, minHousePrice, maxHousePrice, svg,
+//housingAnimate()
+var urlParams, filename, globalData, margin, x, y, xaxis, cityColor, cityFlag, country, countrydata, minHousePrice, maxHousePrice, svg,
     vm, tagname, points, tooltip, focus, timeScales, lastAxisNum, NFlag, MFlag, SFlag, EFlag, OFlag, TFlag;
 function housingInit(){
 NFlag = false;
@@ -7,11 +8,15 @@ SFlag = false;
 EFlag = false;
 OFlag = false;
 TFlag = false;
+cityFlag = {};
 
 var divs = document.querySelectorAll('.svg.small-svg');
 divs.forEach(function(div) {
     div.innerHTML = '';
 });
+var bigDiv = document.getElementById('svg1');
+bigDiv.innerHTML = '';
+
 
 urlParams = new URLSearchParams(window.location.search);
 filename = 'https://raw.githubusercontent.com/Yang-Shun-Yu/DataVisualization_TaiwanMap/main/dataset/0years_median_house_price.json';
@@ -20,7 +25,7 @@ globalData = null;
 if(urlParams.get("filename")){
   filename = urlParams.get("filename");
 }
-
+//housingAnimate();
 // set the dimensions and margins of the graph
 margin = {top: 20, right: 50, bottom: 30, left: 80},
     width = 450 - margin.left - margin.right,
@@ -45,7 +50,7 @@ cityColor = {
   '南投縣': '#BD748F',
   '雲林縣': '#D95F30',
   '高雄市': '#64894D',
-  '臺南市': '#D88C27',
+  '臺南市': '#D88C49',
   '嘉義市': '#D9AE2C',
   '嘉義縣': '#2C6AA5',
   '屏東縣': '#59A55D',
@@ -54,8 +59,16 @@ cityColor = {
   '金門縣': '#AABBCC', 
   '連江縣': 'DDEEFF'
 };
+Object.keys(cityColor).forEach(function(key) {
+  if (key != '新竹市'){
+    cityFlag[key] = false;
+  }
+  else{
+    cityFlag[key] = true;
+  }
+})
 
-country = ["新竹市"];
+country = ['新竹市'];
 if(urlParams.get("country")){
   country = urlParams.get("country").split(",");
 }
@@ -102,8 +115,9 @@ d3.json(filename).then(function(data) {
   });
   
   $("path").mouseup(function(e){
-
+    
     tagname=$(this).attr("data-name");
+    console.log(`${tagname} clicked`)
     vm.filter=tagname;
     if(country.find(element => element === tagname) === undefined){
 
@@ -117,6 +131,7 @@ d3.json(filename).then(function(data) {
       
       country.push(tagname);
       d3.select(this).style('fill', cityColor[tagname]);
+
     }else{
       const index = country.indexOf(tagname);
       if (index > -1) {
@@ -173,7 +188,6 @@ d3.json(filename).then(function(data) {
       };
       
       throwCity('update', tagname, cityColor[tmp]);
-
   });
   
 
@@ -265,30 +279,33 @@ d3.json(filename).then(function(data) {
     }
   }
 // Get the SVG container element
-var svgContainer = document.getElementById('svg3');
+var svgContainer = document.getElementById('svg5');
 
 // Create a new <div> element
 var newDiv = document.createElement("div");
 
 // Set its id attribute
-newDiv.setAttribute("id", "tooltip");
+newDiv.setAttribute("id", "housingTooltip");
 
 // Set its style attribute
-newDiv.setAttribute("style", "position:absolute;background-color:lightgray;padding:5px;left:200px");
+newDiv.setAttribute("style", "position:absolute;background-color:lightgray;padding:5px;");
 
 // Append the new div to the SVG container
 svgContainer.appendChild(newDiv);
 
   var svg4 = document.getElementById('svg4');
-  svg4.innerHTML+=
-  `<button onclick="buttonOnClick('total')">全台</button>
-  <button onclick="buttonOnClick('N')">北部</button>
-  <button onclick="buttonOnClick('M')">中部</button>
-  <button onclick="buttonOnClick('S')">南部</button>
-  <button onclick="buttonOnClick('E')">東部</button>
-  <button onclick="buttonOnClick('O')">離島</button>
-  <button onClick="urlParams.set('country', '新竹市');window.location.search = urlParams;">Return to default</button>`
-  tooltip = d3.select('#tooltip');
+  if(!svg4.innerHTML.includes('onclick')){
+    svg4.innerHTML+=
+    `<button onclick="buttonOnClick('total')">全台</button>
+    <button onclick="buttonOnClick('N')">北部</button>
+    <button onclick="buttonOnClick('M')">中部</button>
+    <button onclick="buttonOnClick('S')">南部</button>
+    <button onclick="buttonOnClick('E')">東部</button>
+    <button onclick="buttonOnClick('O')">離島</button>`
+  }
+
+  tooltip = d3.select('#housingTooltip');
+  console.log(tooltip)
 
   focus = svg.append('g')
     .attr('class', 'focus')
@@ -387,9 +404,15 @@ svgContainer.appendChild(newDiv);
       .selectAll()
       .data(countrytotal).enter()
       .append('div')
-    	.attr("class", d => "tooltip " + d.name)
+    	.attr("class", d => "housingTooltip " + d.name)
       .style('color', d => d.name == index ? cityColor[d.name] : "#000")
       .html(d => d.name + '：' + Math.round(d.money) + unitOfPrice);
+      tooltip.style('left', 914 + "px")
+    console.log(event.pageX + offsetX, event.pageY - 22*circleIndex)
+    console.log(window.getComputedStyle(document.getElementById('housingTooltip')).left, 
+    window.getComputedStyle(document.getElementById('housingTooltip')).top,
+    tooltip.text())
+
 
 		 var circles = focus.selectAll(".hoverCircle")
 			.data(countrytotal)
@@ -411,7 +434,7 @@ svgContainer.appendChild(newDiv);
     }
 })
 
-housingAnimate();
+//housingAnimate();
 
 }
 function selectOnChange(){
@@ -526,7 +549,7 @@ function buttonOnClick(position, clickedCity){
           continue;
         }
         var tmp = country[i];
-        d3.select('#'+tmp).style('fill', cityColor[tmp]);
+        console.log(`turn on ${tmp}`)
         valueline.push(d3.line()
         .x(function(d) { return x(xaxis[d]);  })
         .y(function(d) { return y(globalData[xaxis[d]][tmp][tmp]); }))
@@ -551,6 +574,110 @@ function buttonOnClick(position, clickedCity){
         .call(hover);
       throwCity('update', tmp, cityColor[tmp]);
       };
+      if(clickedCity != undefined){
+        if (cityFlag[clickedCity] == false){
+          console.log(`turn on ${clickedCity}`)
+          d3.select('#'+clickedCity).style('fill', cityColor[clickedCity]);
+        }
+        else{
+          console.log(`turn off ${clickedCity}`)
+          d3.select('#'+clickedCity).style('fill', '#01814A');
+        }
+        cityFlag[clickedCity] = !cityFlag[clickedCity];
+        console.log(cityFlag);
+      }
+      if(position == 'N'){
+      if(NFlag==false){
+        console.log('turn off N')
+        for(var i=0;i<7;i++){
+          d3.select('#'+Object.keys(cityColor)[i]).style('fill', '#01814A');
+          cityFlag[Object.keys(cityColor)[i]] = false;
+        }
+      }
+      else{
+        console.log('turn on N')
+        for(var i=0;i<7;i++){
+          d3.select('#'+Object.keys(cityColor)[i]).style('fill', cityColor[Object.keys(cityColor)[i]]);
+          cityFlag[Object.keys(cityColor)[i]] = true;
+        }
+      }}
+      if(position == 'M'){
+      if(MFlag==false){
+        console.log(`turn off M`)
+        for(var i=7;i<12;i++){
+          d3.select('#'+Object.keys(cityColor)[i]).style('fill', '#01814A');
+          cityFlag[Object.keys(cityColor)[i]] = false;
+        }
+      }
+      else{
+        console.log(`turn on M`)
+        for(var i=7;i<12;i++){
+          d3.select('#'+Object.keys(cityColor)[i]).style('fill', cityColor[Object.keys(cityColor)[i]]);
+          cityFlag[Object.keys(cityColor)[i]] = true;
+        }
+      }}
+      if(position == 'S'){
+      if(SFlag==false){
+        console.log(`turn off S`)
+        for(var i=12;i<17;i++){
+          d3.select('#'+Object.keys(cityColor)[i]).style('fill', '#01814A');
+          cityFlag[Object.keys(cityColor)[i]] = false;
+        }
+      }
+      else{
+        console.log(`turn on S`)
+        for(var i=12;i<17;i++){
+          d3.select('#'+Object.keys(cityColor)[i]).style('fill', cityColor[Object.keys(cityColor)[i]]);
+          cityFlag[Object.keys(cityColor)[i]] = true;
+        }
+      }}
+      if(position == 'E'){
+      if(EFlag==false){
+        console.log(`turn off E`)
+        for(var i=17;i<19;i++){
+          d3.select('#'+Object.keys(cityColor)[i]).style('fill', '#01814A');
+          cityFlag[Object.keys(cityColor)[i]] = false;
+        }
+      }
+      else{
+        console.log(`turn on E`)
+        for(var i=17;i<19;i++){
+          d3.select('#'+Object.keys(cityColor)[i]).style('fill', cityColor[Object.keys(cityColor)[i]]);
+          cityFlag[Object.keys(cityColor)[i]] = true;
+        }
+      }
+      }
+      if(position == 'O'){
+      if(OFlag==false){
+        console.log(`turn off O`)
+        for(var i=19;i<21;i++){
+          d3.select('#'+Object.keys(cityColor)[i]).style('fill', '#01814A');
+          cityFlag[Object.keys(cityColor)[i]] = false;
+        }
+      }
+      else{
+        console.log(`turn on O`)
+        for(var i=19;i<21;i++){
+          d3.select('#'+Object.keys(cityColor)[i]).style('fill', cityColor[Object.keys(cityColor)[i]]);
+          cityFlag[Object.keys(cityColor)[i]] = true;
+        }
+      }}
+      if(position == 'total'){
+      if(TFlag==false){
+        console.log(`turn off T`)
+        for(var i=0;i<21;i++){
+          d3.select('#'+Object.keys(cityColor)[i]).style('fill', '#01814A');
+          cityFlag[Object.keys(cityColor)[i]] = false;
+        }
+      }
+      else{
+        console.log(`turn on T`)
+        for(var i=0;i<21;i++){
+          d3.select('#'+Object.keys(cityColor)[i]).style('fill', cityColor[Object.keys(cityColor)[i]]);
+          cityFlag[Object.keys(cityColor)[i]] = true;
+        }
+      }}
+
 
 }
 
