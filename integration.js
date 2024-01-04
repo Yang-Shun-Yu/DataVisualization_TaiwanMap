@@ -1,10 +1,10 @@
 let Integration = {
     countyData: [
+        "新北市",
         "臺北市",
         "嘉義市",
         "新竹市",
         "基隆市",
-        "新北市",
         "桃園市",
         "臺中市",
         "彰化縣",
@@ -546,7 +546,7 @@ let Integration = {
                 .text(`${Integration.countyData[i]}`);
         }
     },
-    renderChart1: function (county="臺北市") {
+    renderChart1: function (county="新北市") {
         const svgContainer = d3
             .select("#svg1");
         svgContainer

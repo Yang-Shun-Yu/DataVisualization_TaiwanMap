@@ -331,7 +331,7 @@ let Population = {
                         .style("top", `${event.layerY + 10}px`)
                         .style("position", "absolute")
                         .style("padding", "5px")
-                        .style("font-size", "10px")
+                        .style("font-size", "16px")
                         .style("background-color", "#D0D0D0")
                         .style("border-radius", "10px");
                     tooltip
@@ -466,7 +466,7 @@ let Population = {
                         .style("top", `${event.layerY + 10}px`)
                         .style("position", "absolute")
                         .style("padding", "5px")
-                        .style("font-size", "10px")
+                        .style("font-size", "16px")
                         .style("background-color", "#D0D0D0")
                         .style("border-radius", "10px");
                     tooltip
@@ -490,7 +490,7 @@ let Population = {
                         .style("top", "0px");
                 })
                 .transition()
-                .duration(4000 - i * 200)
+                .duration(3000 - i * 200)
                 .attr("x", width / 2 - offset - (xScale1(0) - xScale1(male / maleTotal * 100)))
                 .attr("y", yScale1(ageDomain1[i]))
                 .attr("width", xScale1(0) - xScale1(male / maleTotal * 100))
@@ -513,7 +513,7 @@ let Population = {
                         .style("top", `${event.layerY + 10}px`)
                         .style("position", "absolute")
                         .style("padding", "5px")
-                        .style("font-size", "10px")
+                        .style("font-size", "16px")
                         .style("background-color", "#D0D0D0")
                         .style("border-radius", "10px");
                     tooltip
@@ -537,7 +537,7 @@ let Population = {
                         .style("top", "0px");
                 })
                 .transition()
-                .duration(4000 - i * 200)
+                .duration(3000 - i * 200)
                 .attr("x", xScale2(0))
                 .attr("y", yScale2(ageDomain2[i]))
                 .attr("width", xScale2(female / femaleTotal * 100) - xScale2(0))
