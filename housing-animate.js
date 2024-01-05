@@ -17,7 +17,7 @@ var playButton; // 播放按鈕
 var rank = 0;
 function housingAnimate(){
   housingInit()
-filename = 'https://raw.githubusercontent.com/Yang-Shun-Yu/DataVisualization_TaiwanMap/main/dataset/3years_median_house_price.json';
+filename = 'https://raw.githubusercontent.com/Yang-Shun-Yu/DataVisualization_TaiwanMap/main/dataset/0years_median_house_price.json';
 if(urlParams.get("filename")){
   filename = urlParams.get("filename");
 }
@@ -355,7 +355,6 @@ function change() {
   
   // 播放按鈕
   var checkBox = document.getElementById('playpause');
-  console.log(checkBox)
   //console.log(checkBox.checked);
   checkBox.addEventListener('click', function() {
     console.log('click')

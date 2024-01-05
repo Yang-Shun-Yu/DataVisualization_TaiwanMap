@@ -1,4 +1,16 @@
-//housingAnimate()
+function initialize(){
+  housingAnimate();
+  country.forEach(function(element){
+    cityFlag[element] = false;
+    removeData(element);
+  })
+  country=['新竹市'];
+  cityFlag['新竹市']=true;
+  d3.select('#svg1').selectAll('rect.bar').remove();
+  renderData = []
+  rankedYear = []
+  throwCity('initial')
+}
 var urlParams, filename, globalData, margin, x, y, xaxis, cityColor, cityFlag, country, countrydata, minHousePrice, maxHousePrice, svg,
     vm, tagname, points, tooltip, focus, timeScales, lastAxisNum, NFlag, MFlag, SFlag, EFlag, OFlag, TFlag;
 function housingInit(){
@@ -305,7 +317,6 @@ svgContainer.appendChild(newDiv);
   }
 
   tooltip = d3.select('#housingTooltip');
-  console.log(tooltip)
 
   focus = svg.append('g')
     .attr('class', 'focus')
