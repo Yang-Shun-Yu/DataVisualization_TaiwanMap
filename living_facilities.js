@@ -120,7 +120,7 @@ function renderLivingFacilitiesChart1(csvData) {
         .attr("text-anchor", "middle")
         .style("font-size", "24px")
         .style("font-weight", "bold")
-        .text("台灣縣市");
+        .text("台灣縣市 體育館");
 
     const groupedData = csvData.reduce(function (acc, current) {
         const city = current.縣市;
@@ -277,7 +277,7 @@ function renderLivingFacilitiesChart1City(csvData, inputcity) {
         .attr("text-anchor", "middle")
         .style("font-size", "24px")
         .style("font-weight", "bold")
-        .text(`${inputcity}`);
+        .text(`${inputcity} 體育館`);
 
     const groupedData = csvData.reduce(function (acc, current) {
         const city = current.縣市;
@@ -449,7 +449,7 @@ function renderLivingFacilitiesChart1CityTown(csvData, inputcity, inputtown) {
         .attr("text-anchor", "middle")
         .style("font-size", "24px")
         .style("font-weight", "bold")
-        .text(`${inputcity}  ${inputtown}`);
+        .text(`${inputcity}  ${inputtown} 體育館` );
 
     const groupedData = csvData.reduce(function (acc, current) {
         const city = current.縣市;
