@@ -1,3 +1,3 @@
 # DataVisualization_TaiwanMap
-[Demo](https://Yang-Shun-Yu.github.io/DataVisualization_TaiwanMap/index.html)
+[Demo](https://yang-shun-yu.github.io/DataVisualization_TaiwanMap/)
 
